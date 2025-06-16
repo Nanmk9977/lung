@@ -9,3 +9,4 @@ matplotlib
 pandas
 grad-cam==1.4.0
 mysql-connector-python
+flask-mysqldb
