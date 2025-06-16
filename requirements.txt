@@ -1,0 +1,10 @@
+flask
+torch
+torchvision
+Pillow
+numpy
+opencv-python
+matplotlib
+pytorch-grad-cam
+gunicorn
+fpdf

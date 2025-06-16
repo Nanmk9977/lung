@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LungCare AI | Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap + FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+    }
+
+    .navbar {
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    #hero {
+      background-image: url('{{ url_for("static", filename="images/bg.png") }}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: left;
+      position: relative;
+      padding: 60px 20px;
+      color: white;
+    }
+
+    #hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1;
+    }
+
+    #hero .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    #hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    #hero p {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      #hero h1 {
+        font-size: 3.5rem;
+      }
+      #hero p {
+        font-size: 1.3rem;
+      }
+    }
+
+    .btn-primary {
+      background-color: #002D62;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #004080;
+    }
+
+    .services .fa-stack {
+      font-size: 2rem;
+      color: #006699;
+    }
+
+    .footer {
+      background-color: #f8f9fa;
+      padding: 40px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg bg-white py-3 sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold fs-4 text-primary" href="#">LungCare AI</a>
+      <div class="ms-auto">
+        <a class="btn btn-outline-primary me-2" href="/login_user">User Login</a>
+        <a class="btn btn-outline-success me-2" href="/register">Register</a>
+        <a class="btn btn-outline-dark me-2" href="/login_admin">Admin Login</a>
+        <a class="btn btn-outline-secondary" href="#about">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="container">
+      <h1 class="fw-bold" style="font-size: 1.8rem;">
+          Multi-Modal AI System <br>
+          for Lung Disease Detection & Progression Tracking
+      </h1>
+      <p>Early Detection, Smarter Monitoring, Healthier Lives.</p>
+      <button class="btn btn-primary btn-lg" onclick="alert('Please sign in to get started.')">Get Started</button>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+<section id="about" class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-3">
+      About LungCare AI
+    </h2>
+    <h5 class="text-center text-muted mb-4">
+      Multi-Modal AI System for Lung Disease Detection and Progression Tracking
+    </h5>
+    <p class="text-center mx-auto" style="max-width: 750px;">
+      LungCare AI is an intelligent and integrated diagnostic platform designed to assist in the early detection and continuous monitoring of lung-related diseases using multiple data modalities. It leverages advanced artificial intelligence models to analyze chest X-ray images, smart health vitals (like SpO₂ and heart rate), and cough sound patterns collected via microphones.
+    </p>
+    <p class="text-center mx-auto" style="max-width: 750px;">
+      The system supports accurate diagnosis of several lung disease. Once diagnosed, the application helps track patient health progression over time through visual charts and trend predictions, enabling users to take timely actions. With secure user management, both patients and healthcare professionals can access insights through a user-friendly interface.
+    </p>
+  </div>
+</section>
+
+
+  <!-- SERVICES -->
+  <section class="services bg-light py-5">
+    <div class="container">
+      <h3 class="text-center mb-5">Key Features</h3>
+      <div class="row text-center">
+        <div class="col-md-4 mb-4">
+          <span class="fa-stack fa-2x">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-x-ray fa-stack-1x fa-inverse"></i>
+          </span>
+          <h4>Radiograph Analysis</h4>
+          <p>AI-based X-ray scans to detect lung conditions with precision.</p>
+        </div>
+        <div class="col-md-4 mb-4">
+          <span class="fa-stack fa-2x">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-microphone fa-stack-1x fa-inverse"></i>
+          </span>
+          <h4>Cough Sound Detection</h4>
+          <p>Audio analysis to identify respiratory issues based on cough patterns.</p>
+        </div>
+        <div class="col-md-4 mb-4">
+          <span class="fa-stack fa-2x">
+            <i class="fas fa-circle fa-stack-2x"></i>
+            <i class="fas fa-heartbeat fa-stack-1x fa-inverse"></i>
+          </span>
+          <h4>Vitals Monitoring</h4>
+          <p>Smartwatch integration to track SpO₂, heart rate, and other vitals.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer text-center">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <h5>Contact Us</h5>
+          <p>Email: <strong>support@lungcare.ai</strong><br>Phone: <strong>+91‑123‑456‑7890</strong></p>
+        </div>
+      </div>
+      <hr>
+      <small>&copy; 2025 LungCare AI </small>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

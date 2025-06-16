@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard | LungCare AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: #f1f7ff;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .navbar {
+      background-color: #004085;
+    }
+    .navbar-brand {
+      color: #ffffff;
+      font-weight: bold;
+    }
+    .container {
+      margin-top: 40px;
+    }
+    .card {
+      background-color: #ffffff;
+      border-radius: 10px;
+    }
+    .gradcam-img {
+      width: 300px;
+      height: auto;
+      border: 2px solid #004085;
+      border-radius: 10px;
+      margin-top: 15px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .download-btn {
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg px-4">
+    <span class="navbar-brand">Welcome, {{ name }}</span>
+    <div class="ms-auto">
+      <a class="btn btn-outline-light" href="/logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <h3 class="mb-4 text-primary">Submit Health Data for Analysis</h3>
+
+    <!-- Last Report Summary -->
+    {% if latest_report %}
+      <div class="card p-4 shadow-sm mb-4 border-success">
+        <h5 class="text-success">Last Saved Report</h5>
+        <p><strong>Disease:</strong> <em>{{ latest_report[0] }}</em></p>
+        <p><strong>Vitals Trend:</strong> <em>{{ latest_report[1] }}</em></p>
+        <p><strong>Date:</strong> <em>{{ latest_report[2] }}</em></p>
+        <div class="download-btn">
+          <a href="/download_report" class="btn btn-outline-success btn-sm">Download Report PDF</a>
+        </div>
+      </div>
+    {% elif report_message %}
+      <div class="alert alert-warning shadow-sm mb-4">
+        {{ report_message }}
+      </div>
+    {% endif %}
+
+    <!-- Upload Form -->
+    <form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm mb-4">
+      <h5 class="mb-3">Step 1: Enter Your Details</h5>
+
+      {% if not mobile and not age and not sex and not address %}
+      <!-- Ask for details only if not already submitted -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Mobile Number</label>
+          <input type="text" name="mobile" class="form-control" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Age</label>
+          <input type="number" name="age" class="form-control" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Sex</label>
+          <select name="sex" class="form-select" required>
+            <option disabled selected>Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Address</label>
+        <textarea name="address" rows="2" class="form-control" required></textarea>
+      </div>
+      {% else %}
+      <!-- Display user profile summary -->
+      <div class="alert alert-info">
+        <strong>Your Info:</strong><br>
+        Mobile: {{ mobile }}<br>
+        Age: {{ age }}<br>
+        Sex: {{ sex }}<br>
+        Address: {{ address }}
+      </div>
+      {% endif %}
+
+      <hr class="my-4">
+
+      <h5 class="mb-3">Step 2: Upload Health Data</h5>
+      <div class="mb-3">
+        <label class="form-label">Upload Chest X-ray Image</label>
+        <input type="file" name="cxr" accept="image/*" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Upload Smart Vitals CSV</label>
+        <input type="file" name="vitals" accept=".csv" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-success w-100">Analyze</button>
+    </form>
+
+    <!-- Results Section -->
+    {% if prediction or vitals %}
+    <div class="card p-4 shadow-sm mb-4">
+      {% if prediction %}
+        <h5 class="text-success">CXR Prediction:</h5>
+        <p><strong>Disease Detected:</strong> <em>{{ prediction }}</em></p>
+        <p><strong>Confidence Score:</strong> <em>{{ (confidence * 100) | round(2) }}%</em></p>
+
+        {% if gradcam %}
+          <p class="mt-3"><strong>Explainability (Grad-CAM):</strong></p>
+          <img src="{{ gradcam }}" alt="Grad-CAM Heatmap" class="gradcam-img">
+          <div class="download-btn">
+            <a href="{{ gradcam }}" download class="btn btn-outline-primary btn-sm">Download Image</a>
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if vitals %}
+        <hr>
+        <h5 class="text-info">Vitals Condition:</h5>
+        <p><strong>Status:</strong> <em>{{ vitals }}</em></p>
+
+        {% if graph %}
+          <h6 class="mt-4">Vitals Trend</h6>
+          <canvas id="vitalsChart" height="200"></canvas>
+          <script>
+            const graphData = {{ graph | tojson }};
+            const labels = Array.from({length: graphData.length}, (_, i) => `T${i+1}`);
+            const heartRate = graphData.map(d => d.heart_rate);
+            const spo2 = graphData.map(d => d.spo2);
+
+            new Chart(document.getElementById('vitalsChart'), {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    label: 'Heart Rate',
+                    data: heartRate,
+                    borderColor: 'red',
+                    fill: false,
+                    tension: 0.4
+                  },
+                  {
+                    label: 'SpO2',
+                    data: spo2,
+                    borderColor: 'blue',
+                    fill: false,
+                    tension: 0.4
+                  }
+                ]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: false,
+                    suggestedMin: 60,
+                    suggestedMax: 110
+                  }
+                },
+                plugins: {
+                  legend: {
+                    display: true,
+                    position: 'top'
+                  }
+                }
+              }
+            });
+          </script>
+        {% endif %}
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
