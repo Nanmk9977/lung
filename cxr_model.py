@@ -10,6 +10,20 @@ from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 
+import os
+import gdown
+
+# Google Drive model file ID and output filename
+file_id = "11XFgmoX6vqBMwWha0ga-H_D5iUEQMxwd"
+output_path = "best_resnet18_cxr.pt"
+
+# Only download if the model file does not exist
+if not os.path.exists(output_path):
+    print("Downloading model from Google Drive...")
+    url = f"https://drive.google.com/uc?id={file_id}"
+    gdown.download(url, output_path, quiet=False)
+
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Load ResNet18 model
