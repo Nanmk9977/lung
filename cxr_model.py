@@ -8,10 +8,8 @@ import cv2
 import matplotlib.pyplot as plt
 import gdown
 from pytorch_grad_cam import GradCAM
-from pytorch_grad_cam.utils.image import show_cam_on_image
-from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
-from pytorch_grad_cam.utils.model_targets import SoftmaxOutputTarget
-from pytorch_grad_cam.utils.image import preprocess_image
+from pytorch_grad_cam.utils.image import show_cam_on_image, preprocess_image
+from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget  # ✅ Correct import
 
 # Device setup
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -59,7 +57,7 @@ def generate_gradcam(image_path):
     # Set up GradCAM
     target_layers = [model.layer4[-1]]
     cam = GradCAM(model=model, target_layers=target_layers, use_cuda=torch.cuda.is_available())
-    targets = [ClassifierOutputTarget(torch.argmax(model(input_tensor)).item())]
+    targets = [ClassifierOutputTarget(torch.argmax(model(input_tensor)).item())]  # ✅ Replaced deprecated usage
 
     # Raw image for overlay
     rgb_img = np.array(image.resize((224, 224))) / 255.0
