@@ -38,7 +38,7 @@ transform = transforms.Compose([
                          [0.229, 0.224, 0.225])
 ])
 
-def predict(image_path):
+def predict_cxr(image_path):
     image = Image.open(image_path).convert('RGB')
     input_tensor = transform(image).unsqueeze(0).to(device)
 
