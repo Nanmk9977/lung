@@ -4,8 +4,7 @@ import re
 import os
 import pandas as pd
 from model import classify_patient_condition
-from cxr_model import get_prediction as predict_cxr
-
+from cxr_model import predict_cxr
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
